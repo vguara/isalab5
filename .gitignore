@@ -15,3 +15,5 @@ node_modules/
 *.tmp
 *.bak
  
+# remove test
+test.js
