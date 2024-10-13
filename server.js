@@ -2,6 +2,8 @@ const { Client } = require('pg');
 const http = require('http');
 require('dotenv').config();
 
+const PORT = process.env.PORT || 3000;
+
 
 // Admin connection pool
 const adminClient = new Client({
@@ -126,6 +128,6 @@ const server = http.createServer((req, res) => {
                 });
         });
     }
-}).listen(3000, () => {
-    console.log('Server listening on port 3000');
+}).listen(PORT, () => {
+    console.log('Server listening on port', PORT);
 });

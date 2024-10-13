@@ -18,7 +18,5 @@ node_modules/
 # remove test
 test.js
 
-# remove git ignore
-.gitignore
- 
+
  
