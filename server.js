@@ -76,6 +76,14 @@ const server = http.createServer((req, res) => {
 
     createPatientTable();
     
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        });
+        res.end();
+    }
  
     if (req.method === 'GET' && req.url.startsWith('/patient/')) {
         const query = decodeURIComponent(req.url.split('/patient/')[1]);
