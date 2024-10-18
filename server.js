@@ -5,7 +5,6 @@ require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
 
-// Admin connection pool
 const adminClient = new Client({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -18,7 +17,6 @@ const adminClient = new Client({
       }
 });
 
-// Regular user connection pool
 const regUserClient = new Client({
     host: process.env.DB_HOST,
     user: process.env.NEW_REG_USER,
@@ -40,27 +38,6 @@ regUserClient.connect()
     .then(() => console.log('Regular user connected to the database successfully!'))
     .catch(err => console.error('Error connecting regular user to the database:', err));
 
-
-// function createPatientTable() {
-//     const createTableQuery = `
-//         CREATE TABLE IF NOT EXISTS patient (
-//             PatientID SERIAL PRIMARY KEY,
-//             name VARCHAR(100),
-//             dateOfBirth DATE
-//         );
-//     `;
-
-//     adminClient.query(createTableQuery)
-//         .then(() => {
-//             return adminClient.query(`GRANT SELECT ON TABLE patient TO limited_user;`);
-//         })
-//         .then(() => {
-//             return adminClient.query(`GRANT INSERT ON TABLE patient TO limited_user;`); 
-//         })
-//         .then(() => console.log('Patient table created or already exists.'))
-//         .catch(error => console.error('Error creating patient table:', error));
-// }
-
 function createPatientTable() {
     const createTableQuery = `
         CREATE TABLE IF NOT EXISTS patient (
@@ -73,12 +50,12 @@ function createPatientTable() {
     adminClient.query(createTableQuery)
         .then(() => {
             console.log('Patient table created or already exists.');
-            // Grant privileges on the table
+            
             return adminClient.query(`GRANT SELECT, INSERT ON patient TO limited_user;`);
         })
         .then(() => {
             console.log('Granted SELECT and INSERT on patient to limited_user.');
-            // Grant privileges on the sequence
+            
             return adminClient.query(`GRANT USAGE, SELECT ON SEQUENCE patient_patientid_seq TO limited_user;`);
         })
         .then(() => {
@@ -96,6 +73,8 @@ const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    createPatientTable();
     
  
     if (req.method === 'GET' && req.url.startsWith('/patient/')) {
